@@ -23,7 +23,7 @@
 #if !defined(GPUTOOLS_AMDIL_SOURCE_FILE_HPP_INC)
 #define GPUTOOLS_AMDIL_SOURCE_FILE_HPP_INC 1
 
-#include "gputools/amdil/ASTNode.hpp"
+#include "gputools/amdil/Scope.hpp"
 
 namespace gputools
 {
@@ -35,7 +35,7 @@ class Function;
 /**
  * Representation of a source file containing AMDIL.
  */
-class SourceFile : public ASTNode
+class SourceFile : public Scope
 {
 
 public:

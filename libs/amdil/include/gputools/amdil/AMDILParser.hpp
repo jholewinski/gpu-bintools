@@ -31,6 +31,7 @@ namespace amdil
 {
 
 class Function;
+class Scope;
 class SourceFile;
 
 /**
@@ -102,8 +103,11 @@ private:
   void parseLine(std::istream& stream,
                  std::string&  line,
                  SourceFile*   sourceFile,
-                 Function*     function);
+                 Scope*        scope);
 
+  TokenVector::iterator parseOperand(TokenVector::iterator begin,
+                                     TokenVector::iterator end);
+  
   void tokenizeLine(std::string& line,
                     TokenVector& tokens);
 

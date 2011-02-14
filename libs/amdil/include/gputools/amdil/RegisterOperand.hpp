@@ -14,16 +14,16 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE OR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
 
-#if !defined(GPUTOOLS_AMDIL_FUNCTION_HPP_INC)
-#define GPUTOOLS_AMDIL_FUNCTION_HPP_INC 1
+#if !defined(GPUTOOLS_AMDIL_REGISTER_OPERAND_HPP_INC)
+#define GPUTOOLS_AMDIL_REGISTER_OPERAND_HPP_INC 1
 
-#include "gputools/amdil/Scope.hpp"
+#include "gputools/amdil/Operand.hpp"
 
 namespace gputools
 {
@@ -31,40 +31,27 @@ namespace amdil
 {
 
 /**
- * Representation of an AMDIL function.
+ * An AMDIL register operand.
  */
-class Function : public Scope
+class RegisterOperand : public Operand
 {
 
 public:
-  
-  /**
-   * Creates an AMDIL Function.
-   *
-   * @param[in] id  The function id.
-   *
-   * @return The created Function.
-   */
-  static Function* createFunction(const std::string& id);
+
+  static RegisterOperand* createRegisterOperand(size_t regNumber);
+                                                
   
 protected:
 
   /**
    * Constructor.
-   *
-   * @param[in] id  The function id.
    */
-  Function(const std::string& id);
+  RegisterOperand();
 
   /**
    * Destructor.
    */
-  virtual ~Function();
-
-
-private:
-
-  std::string id_;
+  virtual ~RegisterOperand();
   
 };
 

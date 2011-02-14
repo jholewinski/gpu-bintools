@@ -20,55 +20,22 @@
  * THE SOFTWARE.
  */
 
-#if !defined(GPUTOOLS_AMDIL_FUNCTION_HPP_INC)
-#define GPUTOOLS_AMDIL_FUNCTION_HPP_INC 1
 
-#include "gputools/amdil/Scope.hpp"
+#include "gputools/amdil/RegisterOperand.hpp"
+
 
 namespace gputools
 {
 namespace amdil
 {
 
-/**
- * Representation of an AMDIL function.
- */
-class Function : public Scope
+RegisterOperand::RegisterOperand()
 {
+}
 
-public:
-  
-  /**
-   * Creates an AMDIL Function.
-   *
-   * @param[in] id  The function id.
-   *
-   * @return The created Function.
-   */
-  static Function* createFunction(const std::string& id);
-  
-protected:
-
-  /**
-   * Constructor.
-   *
-   * @param[in] id  The function id.
-   */
-  Function(const std::string& id);
-
-  /**
-   * Destructor.
-   */
-  virtual ~Function();
-
-
-private:
-
-  std::string id_;
-  
-};
+RegisterOperand::~RegisterOperand()
+{
+}
 
 }
 }
-
-#endif

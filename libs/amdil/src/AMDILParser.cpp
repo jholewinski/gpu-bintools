@@ -78,16 +78,12 @@ SourceFile* AMDILParser::parseStream(std::istream&      stream,
   }
 
   sourceFile = SourceFile::createSourceFile(name, line);
-
-  // Function "" is the global function
-  Function* globalFunction = Function::createFunction("");
-  sourceFile->addFunction(globalFunction);
   
   // Now parse all non-empty lines.
   getLineFromStream(stream, line);
   while(line.size() > 0)
   {
-    parseLine(stream, line, sourceFile, globalFunction);
+    parseLine(stream, line, sourceFile, sourceFile);
 
     getLineFromStream(stream, line);
   }
@@ -98,7 +94,7 @@ SourceFile* AMDILParser::parseStream(std::istream&      stream,
 void AMDILParser::parseLine(std::istream& stream,
                             std::string&  line,
                             SourceFile*   sourceFile,
-                            Function*     function)
+                            Scope*        scope)
 {
   TokenVector tokens;
 
@@ -117,6 +113,72 @@ void AMDILParser::parseLine(std::istream& stream,
         // Generic declarations
         sourceFile->addDeclaration(line);
       }
+      else if(tokens[0].text == "mov")
+      {
+        // mov
+        parseOperand(tokens.begin() + 1, tokens.end());
+      }
+    }
+    else
+    {
+      throw std::runtime_error("Line does not start with an identifier.");
+    }
+  }
+}
+
+AMDILParser::TokenVector::iterator AMDILParser::parseOperand(AMDILParser::TokenVector::iterator begin,
+                                                             AMDILParser::TokenVector::iterator end)
+{
+  if(begin == end)
+  {
+    throw std::runtime_error("Malformed operand");
+  }
+  else if((*begin).tokenType != kTokenTypeIdentifier)
+  {
+    throw std::runtime_error("Operand does not start with an identifier");
+  }
+  else
+  {
+    std::string root = (*begin).text;
+
+    ++begin;
+
+    if(begin != end && (*begin).tokenType == kTokenTypePeriod)
+    {
+      ++begin;
+
+      if(begin == end || (*begin).tokenType != kTokenTypeIdentifier)
+      {
+        throw std::runtime_error("Operand has a period but no trailing identifier.");
+      }
+
+      std::string mask = (*begin).text;
+
+      std::cout << "Operand (register mask):  " << root << "." << mask << std::endl;
+    }
+    else if(begin != end && (*begin).tokenType == kTokenTypeOpenBrace)
+    {
+      ++begin;
+
+      if(begin == end || (*begin).tokenType != kTokenTypeIdentifier)
+      {
+        throw std::runtime_error("Operand has an open-brace but no trailing identifier.");
+      }
+
+      std::string offset = (*begin).text;
+
+      ++begin;
+
+      if(begin == end || (*begin).tokenType != kTokenTypeCloseBrace)
+      {
+        throw std::runtime_error("Operand has an opening brace but no closing brace.");
+      }
+
+      std::cout << "Operand (offset):  " << root << "[" << offset << "]" << std::endl;
+    }
+    else
+    {
+      std::cout << "Operand (generic):  " << root << std::endl;
     }
   }
 }

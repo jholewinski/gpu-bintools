@@ -14,57 +14,55 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE OR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
 
-#if !defined(GPUTOOLS_AMDIL_FUNCTION_HPP_INC)
-#define GPUTOOLS_AMDIL_FUNCTION_HPP_INC 1
+#if !defined(GPUTOOLS_AMDIL_SCOPE_HPP_INC)
+#define GPUTOOLS_AMDIL_SCOPE_HPP_INC 1
 
-#include "gputools/amdil/Scope.hpp"
+#include "gputools/amdil/ASTNode.hpp"
 
 namespace gputools
 {
 namespace amdil
 {
 
+class Instruction;
+
 /**
- * Representation of an AMDIL function.
+ * Collection of AMDIL instructions.
  */
-class Function : public Scope
+class Scope : public ASTNode
 {
 
-public:
-  
   /**
-   * Creates an AMDIL Function.
+   * Adds an Instruction to the Scope.
    *
-   * @param[in] id  The function id.
-   *
-   * @return The created Function.
+   * @param[in] instr   The Instruction to add.
    */
-  static Function* createFunction(const std::string& id);
+  void addInstruction(Instruction* instr);
   
 protected:
 
   /**
    * Constructor.
-   *
-   * @param[in] id  The function id.
    */
-  Function(const std::string& id);
+  Scope();
 
   /**
    * Destructor.
    */
-  virtual ~Function();
+  virtual ~Scope();
 
 
 private:
 
-  std::string id_;
+  typedef std::list<Instruction*> InstructionList;
+
+  InstructionList instructions_;
   
 };
 
