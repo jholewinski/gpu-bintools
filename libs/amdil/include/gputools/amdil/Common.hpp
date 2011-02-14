@@ -34,4 +34,8 @@
 #include <list>
 #include <queue>
 
+
+#include <boost/algorithm/string.hpp>
+
+
 #endif

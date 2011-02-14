@@ -35,18 +35,42 @@ namespace amdil
  */
 class SourceFile : public ASTNode
 {
+
+public:
+
+  /**
+   * Creates a new SourceFile node.
+   *
+   * @param[in] name      The source file name.
+   * @param[in] version   The AMDIL version string.
+   *
+   * @return The created SourceFile node.
+   */
+  static SourceFile* createSourceFile(const std::string& name,
+                                      const std::string& version);
   
 protected:
 
   /**
    * Constructor.
+   *
+   * @param[in] name      The source file name.
+   * @param[in] version   The AMDIL version string.
    */
-  SourceFile();
+  SourceFile(const std::string& name,
+             const std::string& version);
 
   /**
    * Destructor.
    */
   virtual ~SourceFile();
+
+
+
+private:
+
+  std::string name_;
+  std::string version_;
   
 };
 

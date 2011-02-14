@@ -29,12 +29,21 @@ namespace gputools
 namespace amdil
 {
 
-SourceFile::SourceFile()
+SourceFile::SourceFile(const std::string& name,
+                       const std::string& version)
+  : name_(name),
+    version_(version)
 {
 }
 
 SourceFile::~SourceFile()
 {
+}
+
+SourceFile* SourceFile::createSourceFile(const std::string& name,
+                                         const std::string& version)
+{
+  return new SourceFile(name, version);
 }
 
 }

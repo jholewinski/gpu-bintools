@@ -22,6 +22,10 @@
 
 
 #include "gputools/amdil/AMDILParser.hpp"
+#include "gputools/amdil/SourceFile.hpp"
+
+
+namespace ba = boost::algorithm;
 
 
 namespace gputools
@@ -47,7 +51,7 @@ SourceFile* AMDILParser::parseFile(const std::string& filename)
   }
 
   // Parse the stream as an AMDIL file stream.
-  SourceFile* source = parseStream(stream);
+  SourceFile* source = parseStream(stream, filename);
 
   // Close the file stream.
   stream.close();
@@ -56,9 +60,231 @@ SourceFile* AMDILParser::parseFile(const std::string& filename)
   return source;
 }
 
-SourceFile* AMDILParser::parseStream(std::istream& stream)
+SourceFile* AMDILParser::parseStream(std::istream&      stream,
+                                     const std::string& name)
 {
-  return NULL;
+  // AMDIL is a line-based language, so we process input one line
+  // at a time.
+  SourceFile* sourceFile;
+  std::string line;
+
+  // The first line must be the AMDIL version string
+  // e.g. il_cs_2_0
+  getLineFromStream(stream, line);
+  if(line.size() != 9)
+  {
+    throw std::runtime_error("Malformed AMDIL file:  no version specified.");
+  }
+
+  sourceFile = SourceFile::createSourceFile(name, line);
+  
+  // Now parse all non-empty lines.
+  getLineFromStream(stream, line);
+  while(line.size() > 0)
+  {
+    parseLine(stream, line, sourceFile);
+
+    getLineFromStream(stream, line);
+  }
+  
+  return sourceFile;
+}
+
+void AMDILParser::parseLine(std::istream& stream,
+                            std::string&  line,
+                            SourceFile*   sourceFile)
+{
+  TokenVector tokens;
+
+  tokenizeLine(line, tokens);
+
+  TokenVector::iterator iter;
+  for(iter = tokens.begin(); iter != tokens.end(); ++iter)
+  {
+    (*iter).print(std::cout);
+  }
+  std::cout << "LINE" << std::endl;
+}
+
+void AMDILParser::tokenizeLine(std::string& line,
+                               TokenVector& tokens)
+{
+  std::string::const_iterator charIter;
+  
+  tokens.clear();
+
+  charIter = line.begin();
+
+  while(charIter != line.end())
+  {
+    if(*charIter == ';')
+    {
+      // Start of a comment
+      return;
+    }
+    else if(isIdentChar(*charIter))
+    {
+      // We have an identifier
+      std::string text;
+
+      do
+      {
+        text += *charIter;
+        charIter++;
+      } while(isIdentChar(*charIter));
+
+      Token token;
+      token.tokenType = kTokenTypeIdentifier;
+      token.text      = text;
+
+      tokens.push_back(token);
+    }
+    else if(*charIter == '(')
+    {
+      charIter++;
+
+      Token token;
+      token.tokenType = kTokenTypeOpenParen;
+
+      tokens.push_back(token);
+    }
+    else if(*charIter == ')')
+    {
+      charIter++;
+
+      Token token;
+      token.tokenType = kTokenTypeCloseParen;
+
+      tokens.push_back(token);
+    }
+    else if(*charIter == '[')
+    {
+      charIter++;
+
+      Token token;
+      token.tokenType = kTokenTypeOpenBrace;
+
+      tokens.push_back(token);
+    }
+    else if(*charIter == ']')
+    {
+      charIter++;
+
+      Token token;
+      token.tokenType = kTokenTypeCloseBrace;
+
+      tokens.push_back(token);
+    }
+    else if(*charIter == ',')
+    {
+      charIter++;
+
+      Token token;
+      token.tokenType = kTokenTypeComma;
+
+      tokens.push_back(token);
+    }
+    else if(*charIter == '.')
+    {
+      charIter++;
+
+      Token token;
+      token.tokenType = kTokenTypePeriod;
+
+      tokens.push_back(token);
+    }
+    else
+    {
+      charIter++;
+    }
+  }
+}
+
+void AMDILParser::getLineFromStream(std::istream& stream,
+                                    std::string&  line)
+{
+  line.clear();
+  
+  do
+  {
+    if(!getline(stream, line).good())
+    {
+      break;
+    }
+
+    ba::trim(line);
+    
+  } while(line.size() == 0);
+}
+
+bool AMDILParser::isIdentChar(char ch)
+{
+  if((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || ch == '_')
+  {
+    return true;
+  }
+  else if((ch >= '0' && ch <= '9') || ch == '-')
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+void AMDILParser::Token::print(std::ostream& stream)
+{
+  switch(tokenType)
+  {
+    case kTokenTypeComma:
+    {
+      stream << "kTokenTypeComma";
+      break;
+    }
+    case kTokenTypeOpenParen:
+    {
+      stream << "kTokenTypeOpenParen";
+      break;
+    }
+    case kTokenTypeCloseParen:
+    {
+      stream << "kTokenTypeCloseParen";
+      break;
+    }
+    case kTokenTypeOpenBrace:
+    {
+      stream << "kTokenTypeOpenBrace";
+      break;
+    }
+    case kTokenTypeCloseBrace:
+    {
+      stream << "kTokenTypeCloseBrace";
+      break;
+    }
+    case kTokenTypePeriod:
+    {
+      stream << "kTokenTypePeriod";
+      break;
+    }
+    case kTokenTypeIdentifier:
+    {
+      stream << "kTokenTypeIdentifier";
+      break;
+    }
+    case kTokenTypeLiteral:
+    {
+      stream << "kTokenTypeLiteral";
+      break;
+    }
+    default:
+    {
+      stream << "Unknown";
+      break;
+    }
+  }
+
+  stream << " - " << text << std::endl;
 }
 
 }

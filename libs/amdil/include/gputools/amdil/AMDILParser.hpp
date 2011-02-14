@@ -64,10 +64,51 @@ public:
    * created AST.
    *
    * @param[in] stream  Stream containing the AMDIL source file.
+   * @param[in] name    Optional stream name for error-reporting.
    *
    * @return A pointer to the AMDIL AST.
    */
-  SourceFile* parseStream(std::istream& stream);
+  SourceFile* parseStream(std::istream&      stream,
+                          const std::string& name = "<stream>");
+
+
+private:
+
+  enum TokenType
+  {
+    kTokenTypeComma     = 0,
+    kTokenTypeOpenParen = 1,
+    kTokenTypeCloseParen,
+    kTokenTypeOpenBrace,
+    kTokenTypeCloseBrace,
+    kTokenTypePeriod,
+    kTokenTypeIdentifier,
+    kTokenTypeLiteral,
+  };
+  
+  struct Token
+  {
+    TokenType   tokenType;
+    uint32_t    regNumber;
+    uint8_t     mask[4];
+    std::string text;
+
+    void print(std::ostream& stream);
+  };
+
+  typedef std::vector<Token> TokenVector;
+  
+  void parseLine(std::istream& stream,
+                 std::string&  line,
+                 SourceFile*   sourceFile);
+
+  void tokenizeLine(std::string& line,
+                    TokenVector& tokens);
+
+  static void getLineFromStream(std::istream& stream,
+                                std::string&  line);
+
+  static bool isIdentChar(char ch);
   
 };
 
