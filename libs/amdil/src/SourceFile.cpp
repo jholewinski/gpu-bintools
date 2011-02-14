@@ -21,7 +21,7 @@
  */
 
 
-#include "gputools/amdil/ASTNode.hpp"
+#include "gputools/amdil/SourceFile.hpp"
 
 
 namespace gputools
@@ -29,11 +29,11 @@ namespace gputools
 namespace amdil
 {
 
-ASTNode::ASTNode()
+SourceFile::SourceFile()
 {
 }
 
-ASTNode::~ASTNode()
+SourceFile::~SourceFile()
 {
 }
 
