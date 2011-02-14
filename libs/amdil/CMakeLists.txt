@@ -22,9 +22,13 @@
 
 
 # Define sources
-set(_sources  "src/ASTNode.cpp")
+set(_sources  "src/AMDILParser.cpp"
+              "src/ASTNode.cpp"
+              "src/SourceFile.cpp")
 
-set(_headers  "include/gputools/amdil/ASTNode.hpp")
+set(_headers  "include/gputools/amdil/AMDILParser.hpp"
+              "include/gputools/amdil/ASTNode.hpp"
+              "include/gputools/amdil/SourceFile.hpp")
 
 
 # Include local headers

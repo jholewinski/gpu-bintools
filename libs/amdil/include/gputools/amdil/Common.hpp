@@ -20,37 +20,18 @@
  * THE SOFTWARE.
  */
 
-#if !defined(GPUTOOLS_AMDIL_SOURCE_FILE_HPP_INC)
-#define GPUTOOLS_AMDIL_SOURCE_FILE_HPP_INC 1
+#if !defined(GPUTOOLS_AMDIL_COMMON_HPP_INC)
+#define GPUTOOLS_AMDIL_COMMON_HPP_INC 1
 
-#include "gputools/amdil/ASTNode.hpp"
-
-namespace gputools
-{
-namespace amdil
-{
-
-/**
- * Representation of a source file containing AMDIL.
- */
-class SourceFile : public ASTNode
-{
-  
-protected:
-
-  /**
-   * Constructor.
-   */
-  SourceFile();
-
-  /**
-   * Destructor.
-   */
-  virtual ~SourceFile();
-  
-};
-
-}
-}
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <stdexcept>
+#include <algorithm>
+#include <vector>
+#include <set>
+#include <map>
+#include <list>
+#include <queue>
 
 #endif

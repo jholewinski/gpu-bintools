@@ -20,33 +20,54 @@
  * THE SOFTWARE.
  */
 
-#if !defined(GPUTOOLS_AMDIL_SOURCE_FILE_HPP_INC)
-#define GPUTOOLS_AMDIL_SOURCE_FILE_HPP_INC 1
+#if !defined(GPUTOOLS_AMDIL_AMDIL_PARSER_HPP_INC)
+#define GPUTOOLS_AMDIL_AMDIL_PARSER_HPP_INC 1
 
-#include "gputools/amdil/ASTNode.hpp"
+#include "gputools/amdil/Common.hpp"
 
 namespace gputools
 {
 namespace amdil
 {
 
+class SourceFile;
+
 /**
- * Representation of a source file containing AMDIL.
+ * Parser for AMDIL.
  */
-class SourceFile : public ASTNode
+class AMDILParser
 {
-  
-protected:
+public:
 
   /**
    * Constructor.
    */
-  SourceFile();
+  AMDILParser();
 
   /**
    * Destructor.
    */
-  virtual ~SourceFile();
+  ~AMDILParser();
+
+  /**
+   * Parses an AMDIL source file and returns a SourceFile pointer for the
+   * created AST.
+   *
+   * @param[in] filename  The name of the AMDIL file on disk.
+   *
+   * @return A pointer to the AMDIL AST.
+   */
+  SourceFile* parseFile(const std::string& filename);
+  
+  /**
+   * Parses an AMDIL source stream and returns a SourceFile pointer for the
+   * created AST.
+   *
+   * @param[in] stream  Stream containing the AMDIL source file.
+   *
+   * @return A pointer to the AMDIL AST.
+   */
+  SourceFile* parseStream(std::istream& stream);
   
 };
 

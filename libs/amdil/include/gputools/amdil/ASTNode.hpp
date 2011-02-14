@@ -23,6 +23,8 @@
 #if !defined(GPUTOOLS_AMDIL_AST_NODE_HPP_INC)
 #define GPUTOOLS_AMDIL_AST_NODE_HPP_INC 1
 
+#include "gputools/amdil/Common.hpp"
+
 namespace gputools
 {
 namespace amdil
@@ -33,7 +35,8 @@ namespace amdil
  */
 class ASTNode
 {
-public:
+  
+protected:
 
   /**
    * Constructor.

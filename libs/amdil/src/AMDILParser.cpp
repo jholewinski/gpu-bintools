@@ -14,43 +14,52 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE OR ANY CLAIM, DAMAGES OR OTHER
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
 
-#if !defined(GPUTOOLS_AMDIL_SOURCE_FILE_HPP_INC)
-#define GPUTOOLS_AMDIL_SOURCE_FILE_HPP_INC 1
 
-#include "gputools/amdil/ASTNode.hpp"
+#include "gputools/amdil/AMDILParser.hpp"
+
 
 namespace gputools
 {
 namespace amdil
 {
 
-/**
- * Representation of a source file containing AMDIL.
- */
-class SourceFile : public ASTNode
+AMDILParser::AMDILParser()
 {
-  
-protected:
+}
 
-  /**
-   * Constructor.
-   */
-  SourceFile();
+AMDILParser::~AMDILParser()
+{
+}
 
-  /**
-   * Destructor.
-   */
-  virtual ~SourceFile();
-  
-};
+SourceFile* AMDILParser::parseFile(const std::string& filename)
+{
+  // Open the input file.
+  std::ifstream stream(filename.c_str(), std::ios::in | std::ios::binary);
+  if(!stream.is_open())
+  {
+    throw std::runtime_error("Unable to open input file");
+  }
+
+  // Parse the stream as an AMDIL file stream.
+  SourceFile* source = parseStream(stream);
+
+  // Close the file stream.
+  stream.close();
+
+  // Return the AST.
+  return source;
+}
+
+SourceFile* AMDILParser::parseStream(std::istream& stream)
+{
+  return NULL;
+}
 
 }
 }
-
-#endif
