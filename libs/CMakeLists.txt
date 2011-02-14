@@ -21,10 +21,5 @@
 #
 
 
-cmake_minimum_required(VERSION 2.8)
-
-project(gpu-tools)
-
-
-
-add_subdirectory(libs)
+# Recurse into amdil/
+add_subdirectory(amdil)

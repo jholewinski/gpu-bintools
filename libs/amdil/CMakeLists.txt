@@ -21,10 +21,21 @@
 #
 
 
-cmake_minimum_required(VERSION 2.8)
+# Define sources
+set(_sources  "src/ASTNode.cpp")
 
-project(gpu-tools)
+set(_headers  "include/gputools/amdil/ASTNode.hpp")
 
 
+# Include local headers
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_subdirectory(libs)
+
+# Add library target
+add_library(gputools-amdil STATIC ${_sources} ${_headers})
+
+# Add library install target
+install(TARGETS gputools-amdil ARCHIVE DESTINATION lib)
+
+# Add header install target
+install(DIRECTORY include/gputools/amdil DESTINATION include/gputools)
