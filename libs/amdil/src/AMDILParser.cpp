@@ -23,6 +23,7 @@
 
 #include "gputools/amdil/AMDILParser.hpp"
 #include "gputools/amdil/SourceFile.hpp"
+#include "gputools/amdil/Function.hpp"
 
 
 namespace ba = boost::algorithm;
@@ -77,12 +78,16 @@ SourceFile* AMDILParser::parseStream(std::istream&      stream,
   }
 
   sourceFile = SourceFile::createSourceFile(name, line);
+
+  // Function "" is the global function
+  Function* globalFunction = Function::createFunction("");
+  sourceFile->addFunction(globalFunction);
   
   // Now parse all non-empty lines.
   getLineFromStream(stream, line);
   while(line.size() > 0)
   {
-    parseLine(stream, line, sourceFile);
+    parseLine(stream, line, sourceFile, globalFunction);
 
     getLineFromStream(stream, line);
   }
@@ -92,18 +97,28 @@ SourceFile* AMDILParser::parseStream(std::istream&      stream,
 
 void AMDILParser::parseLine(std::istream& stream,
                             std::string&  line,
-                            SourceFile*   sourceFile)
+                            SourceFile*   sourceFile,
+                            Function*     function)
 {
   TokenVector tokens;
 
   tokenizeLine(line, tokens);
 
-  TokenVector::iterator iter;
-  for(iter = tokens.begin(); iter != tokens.end(); ++iter)
+  if(tokens.size() == 0)
   {
-    (*iter).print(std::cout);
+    return;
   }
-  std::cout << "LINE" << std::endl;
+  else
+  {
+    if(tokens[0].tokenType == kTokenTypeIdentifier)
+    {
+      if(ba::starts_with(tokens[0].text, "dcl_"))
+      {
+        // Generic declarations
+        sourceFile->addDeclaration(line);
+      }
+    }
+  }
 }
 
 void AMDILParser::tokenizeLine(std::string& line,

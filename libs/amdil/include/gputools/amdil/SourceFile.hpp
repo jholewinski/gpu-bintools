@@ -30,6 +30,8 @@ namespace gputools
 namespace amdil
 {
 
+class Function;
+
 /**
  * Representation of a source file containing AMDIL.
  */
@@ -38,6 +40,42 @@ class SourceFile : public ASTNode
 
 public:
 
+  /**
+   * Adds a literal declaration.
+   *
+   * @param[in] name  The literal name.
+   * @param[in] val0  The first literal value.
+   * @param[in] val1  The second literal value.
+   * @param[in] val2  The third literal value.
+   * @param[in] val3  The fourth literal value.
+   */
+  void addLiteral(const std::string& name,
+                  const std::string& val0,
+                  const std::string& val1,
+                  const std::string& val2,
+                  const std::string& val3);
+
+  /**
+   * Adds a generic declaration statement.
+   *
+   * @param[in] decl  The declaration statement.
+   */
+  void addDeclaration(const std::string& decl);
+
+  /**
+   * Adds a Function to the file.
+   *
+   * @param[in] function  The Function to add.
+   */
+  void addFunction(Function* function);
+  
+  /**
+   * Prints the SourceFile to a stream.
+   *
+   * @param[in] stream  The output stream.
+   */
+  void print(std::ostream& stream);
+  
   /**
    * Creates a new SourceFile node.
    *
@@ -69,8 +107,23 @@ protected:
 
 private:
 
-  std::string name_;
-  std::string version_;
+  struct LiteralValue
+  {
+    std::string first;
+    std::string second;
+    std::string third;
+    std::string fourth;
+  };
+
+  typedef std::map<std::string, LiteralValue> LiteralMap;
+  typedef std::list<std::string>              StringList;
+  typedef std::list<Function*>                FunctionList;
+  
+  std::string  name_;
+  std::string  version_;
+  LiteralMap   literals_;
+  StringList   declarations_;
+  FunctionList functions_;
   
 };
 

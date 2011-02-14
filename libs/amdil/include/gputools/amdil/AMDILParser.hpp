@@ -30,6 +30,7 @@ namespace gputools
 namespace amdil
 {
 
+class Function;
 class SourceFile;
 
 /**
@@ -100,7 +101,8 @@ private:
   
   void parseLine(std::istream& stream,
                  std::string&  line,
-                 SourceFile*   sourceFile);
+                 SourceFile*   sourceFile,
+                 Function*     function);
 
   void tokenizeLine(std::string& line,
                     TokenVector& tokens);

@@ -22,6 +22,7 @@
 
 
 #include "gputools/amdil/SourceFile.hpp"
+#include "gputools/amdil/Function.hpp"
 
 
 namespace gputools
@@ -38,6 +39,50 @@ SourceFile::SourceFile(const std::string& name,
 
 SourceFile::~SourceFile()
 {
+}
+
+void SourceFile::addLiteral(const std::string& name,
+                            const std::string& val0,
+                            const std::string& val1,
+                            const std::string& val2,
+                            const std::string& val3)
+{
+  if(literals_.find(name) != literals_.end())
+  {
+    throw std::runtime_error("Duplicate literal");
+  }
+
+  LiteralValue literal;
+  literal.first  = val0;
+  literal.second = val0;
+  literal.third  = val0;
+  literal.fourth = val0;
+  
+  literals_[name] = literal;
+}
+
+void SourceFile::addDeclaration(const std::string& decl)
+{
+  declarations_.push_back(decl);
+}
+
+void SourceFile::addFunction(Function* function)
+{
+  functions_.push_back(function);
+}
+
+void SourceFile::print(std::ostream& stream)
+{
+  // Print version
+  stream << version_ << std::endl;
+  stream << std::endl;
+
+  // Print declarations
+  StringList::const_iterator declIter;
+  for(declIter = declarations_.begin(); declIter != declarations_.end(); ++declIter)
+  {
+    stream << *declIter << std::endl;
+  }
 }
 
 SourceFile* SourceFile::createSourceFile(const std::string& name,
