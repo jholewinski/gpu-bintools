@@ -26,6 +26,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
+// This file contains the lexical analyzer for AMDIL.
+//
+// Todo List:
+// - Replace exceptions with specialized exception class.
+// - Store line/column information for error reporting.
+
 namespace GpuTools.AmdIl
 {
   /// <summary>
@@ -101,7 +107,6 @@ namespace GpuTools.AmdIl
 
         while(!reader.EndOfStream)
         {
-          AdvanceToNextNonWhiteSpace(reader);
           ch = (char)reader.Read();
 
           if(char.IsNumber(ch) || ch == '-')
@@ -125,16 +130,17 @@ namespace GpuTools.AmdIl
               throw new InvalidDataException("Minus must be followed by a constant.");
             }
 
-            Token token = new Token(TokenType.Constant, constant, null);
+            Token token = new Token(TokenType.Constant, constant, null, 0);
             tokens_.Add(token);
           }
           else if(char.IsLetter(ch))
           {
             // We are starting an identifier.
 
-            string    root = "";
-            string    mask = null;
-            TokenType type = TokenType.Identifier;
+            string    root  = "";
+            string    mask  = null;
+            TokenType type  = TokenType.Identifier;
+            int       index = 0;
 
             root += ch;
 
@@ -181,6 +187,8 @@ namespace GpuTools.AmdIl
                 throw new InvalidDataException("Constant buffer index must be an integer.");
               }
 
+              offset += ch;
+
               while(char.IsNumber((char)reader.Peek()))
               {
                 ch = (char)reader.Read();
@@ -192,6 +200,9 @@ namespace GpuTools.AmdIl
               {
                 throw new InvalidDataException("Missing closing brace on constant buffer index.");
               }
+
+              index = int.Parse(offset);
+              ch    = (char)reader.Peek();
             }
 
             // We have now parsed the root identifier.  However, we may still have a mask.
@@ -212,11 +223,12 @@ namespace GpuTools.AmdIl
               }
             }
 
-            Token token = new Token(type, root, mask);
+            Token token = new Token(type, root, mask, index);
             tokens_.Add(token);
           }
           else
           {
+            // We must be processing a syntactic symbol.
             switch(ch)
             {
               case '(':
@@ -261,6 +273,8 @@ namespace GpuTools.AmdIl
               }
             }
           }
+
+          AdvanceToNextNonWhiteSpace(reader);
         }
       }
     }

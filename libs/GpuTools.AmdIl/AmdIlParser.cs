@@ -74,6 +74,8 @@ namespace GpuTools.AmdIl
     public void ParseStream(Stream stream)
     {
       AmdIlLexer lexer = new AmdIlLexer(stream);
+
+      lexer.GetNextToken();
     }
   }
 }

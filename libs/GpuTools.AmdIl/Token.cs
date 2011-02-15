@@ -75,7 +75,7 @@ namespace GpuTools.AmdIl
     /// </summary>
     /// <param name="type">The token type.</param>
     public Token(TokenType type)
-      : this(type, null, null)
+      : this(type, null, null, 0)
     {
     }
 
@@ -85,15 +85,16 @@ namespace GpuTools.AmdIl
     /// <param name="type">The token type.</param>
     /// <param name="text">The token text.</param.
     /// <param name="mask">The register mask.</param>
+    /// <param name="index">The index value.</param>
     public Token(TokenType type,
                  string    text,
-                 string    mask)
+                 string    mask,
+                 int       index)
+      : this()
     {
       Type = type;
       Text = text;
       Mask = mask;
-
-      Console.WriteLine(type);
     }
 
     #endregion
