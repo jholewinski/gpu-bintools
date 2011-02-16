@@ -23,7 +23,7 @@
 
 using System;
 
-namespace GpuTools.AmdIl
+namespace GpuBinTools.AmdIl
 {
   /// <summary>
   /// Container for all elements within an AMDIL source file.

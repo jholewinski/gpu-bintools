@@ -23,7 +23,7 @@
 
 using System;
 
-namespace GpuTools.AmdIl
+namespace GpuBinTools.AmdIl
 {
   /// <summary>
   /// Token type enumeration.

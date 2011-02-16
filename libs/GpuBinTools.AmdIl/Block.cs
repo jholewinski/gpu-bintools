@@ -24,7 +24,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GpuTools.AmdIl
+namespace GpuBinTools.AmdIl
 {
   /// <summary>
   /// Base class for AST nodes that contain collections of other elements.

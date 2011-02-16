@@ -24,7 +24,7 @@
 using System;
 using System.IO;
 
-namespace GpuTools.AmdIl
+namespace GpuBinTools.AmdIl
 {
   /// <summary>
   /// Parser for AMDIL.

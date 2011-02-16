@@ -23,7 +23,7 @@
 
 using System;
 
-namespace GpuTools.AmdIl
+namespace GpuBinTools.AmdIl
 {
   /// <summary>
   /// Base class for all AST nodes in the AMDIL representation.

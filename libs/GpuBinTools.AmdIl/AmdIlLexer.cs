@@ -32,7 +32,7 @@ using System.Text.RegularExpressions;
 // - Replace exceptions with specialized exception class.
 // - Store line/column information for error reporting.
 
-namespace GpuTools.AmdIl
+namespace GpuBinTools.AmdIl
 {
   /// <summary>
   /// Lexical analyzer (tokenizer) for AMDIL.
