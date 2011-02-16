@@ -1,5 +1,5 @@
-GPU Tools
-=========
+GPU BinTools
+============
 
 Copyright (C) 2011 Justin Holewinski
 

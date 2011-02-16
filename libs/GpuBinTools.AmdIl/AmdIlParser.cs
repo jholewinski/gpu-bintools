@@ -57,11 +57,12 @@ namespace GpuTools.AmdIl
     /// <param name="filename">
     /// The file name.
     /// </param>
-    public void ParseFile(string filename)
+    /// <returns>The generated AstIlFile instance.</returns>
+    public AmdIlFile ParseFile(string filename)
     {
       using(FileStream stream = new FileStream(filename, FileMode.Open))
       {
-        ParseStream(stream);
+        return ParseStream(stream);
       }
     }
 
@@ -71,11 +72,16 @@ namespace GpuTools.AmdIl
     /// <param name="stream">
     /// The stream to parse.
     /// </param>
-    public void ParseStream(Stream stream)
+    /// <returns>The generated AstIlFile instance.</returns>
+    public AmdIlFile ParseStream(Stream stream)
     {
+      AmdIlFile file   = new AmdIlFile();
       AmdIlLexer lexer = new AmdIlLexer(stream);
 
       lexer.GetNextToken();
+
+
+      return file;
     }
   }
 }

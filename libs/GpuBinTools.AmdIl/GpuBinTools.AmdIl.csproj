@@ -32,6 +32,9 @@
     <Compile Include="AmdIlParser.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="AmdIlLexer.cs" />
+    <Compile Include="AstNode.cs" />
+    <Compile Include="Block.cs" />
+    <Compile Include="AmdIlFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
