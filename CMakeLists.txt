@@ -28,6 +28,13 @@ project(gpu-tools)
 
 # Locate Boost
 find_package(Boost REQUIRED)
+
+# Sometimes, the FindBoost script does not honor the "required" flag.
+# So we forcea bail-out here.
+if(NOT Boost_FOUND)
+  message(FATAL_ERROR "Unable to locate Boost.")
+endif()
+
 include_directories(${Boost_INCLUDE_DIRS})
 
 
