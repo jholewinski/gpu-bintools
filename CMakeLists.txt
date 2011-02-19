@@ -31,4 +31,12 @@ find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 
+set(_header_root  "${CMAKE_CURRENT_SOURCE_DIR}/include/gpubintools")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+
 add_subdirectory(libs)
+
+
+# Add header install target
+install(DIRECTORY include/gpubintools DESTINATION include)

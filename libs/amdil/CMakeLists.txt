@@ -22,23 +22,24 @@
 
 
 # Define sources
-set(_sources  "src/AMDILParser.cpp"
-              "src/ASTNode.cpp"
-              "src/Function.cpp"
-              "src/Instruction.cpp"
-              "src/Operand.cpp"
-              "src/RegisterOperand.cpp"
-              "src/Scope.cpp"
-              "src/SourceFile.cpp")
+set(_sources  "AmdIlFile.cpp"
+              "AmdIlParser.cpp"
+              "Operand.cpp"
+              "${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil/GeneratedInstructions.cpp")
 
-set(_headers  "include/gputools/amdil/AMDILParser.hpp"
-              "include/gputools/amdil/ASTNode.hpp"
-              "include/gputools/amdil/Function.hpp"
-              "include/gputools/amdil/Instruction.hpp"
-              "include/gputools/amdil/Operand.hpp"
-              "include/gputools/amdil/RegisterOperand.hpp"
-              "include/gputools/amdil/Scope.hpp"
-              "include/gputools/amdil/SourceFile.hpp")
+set(_headers  "${_header_root}/amdil/AmdIlFile.hpp"
+              "${_header_root}/amdil/AmdIlParser.hpp"
+              "${_header_root}/amdil/Operand.hpp"
+              "${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil/GeneratedInstructions.hpp")
+
+
+# Create target to generate AST nodes
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil")
+add_custom_command(OUTPUT   "${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil/GeneratedInstructions.cpp" "${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil/GeneratedInstructions.hpp"
+                   COMMAND  python ${CMAKE_CURRENT_SOURCE_DIR}/../../tools/generate-ast/generate-amdil-ast.py ${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil
+                   MAIN_DEPENDENCY  ${CMAKE_CURRENT_SOURCE_DIR}/../../tools/generate-ast/generate-amdil-ast.py
+                   COMMENT  "Generating AMDIL AST C++ nodes")
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 
 # Include local headers
@@ -46,10 +47,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
 # Add library target
-add_library(gputools-amdil STATIC ${_sources} ${_headers})
+add_library(gpubintools-amdil STATIC ${_sources} ${_headers})
 
 # Add library install target
-install(TARGETS gputools-amdil ARCHIVE DESTINATION lib)
-
-# Add header install target
-install(DIRECTORY include/gputools/amdil DESTINATION include/gputools)
+install(TARGETS gpubintools-amdil ARCHIVE DESTINATION lib)
