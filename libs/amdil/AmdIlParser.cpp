@@ -81,7 +81,14 @@ AmdIlFile* AmdIlParser::parseFile(const std::string& filename)
       // We have some sort of uav access instruction.
     }
 #include "gpubintools/amdil/ParserSupport.inl"
+    else
+    {
+      std::cerr << "FATAL:  Unknown instruction:  " << line << std::endl;
+      return NULL;
+    }
   }
+
+  return file;
 }
 
 Operand* AmdIlParser::parseOperand(const std::string& text)
