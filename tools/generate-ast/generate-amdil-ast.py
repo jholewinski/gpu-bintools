@@ -11,6 +11,9 @@ binary_operators = [
     ['imad', 'IMadInstruction'],
 ]
 
+unary_operators = [
+    ['mov', 'MovInstruction'],
+]
 
 
 if len(sys.argv) != 2:
@@ -95,6 +98,36 @@ public:
 };
 
 /**
+ * An AMDIL unary operator instruction.
+ */
+class UnaryOperator : public Instruction
+{
+public:
+
+  /**
+   * Constructor.
+   *
+   * @param[in] dest    The destination operand.
+   * @param[in] source  The source operand.
+   */
+  UnaryOperator(Operand* dest,
+                 Operand* source);
+
+  /**
+   * Destructor.
+   */
+  virtual ~UnaryOperator();
+
+
+private:
+
+  Operand* dest_;
+  Operand* source_;
+  
+};
+
+
+/**
  * An AMDIL binary operator instruction.
  */
 class BinaryOperator : public Instruction
@@ -139,6 +172,16 @@ Instruction::~Instruction()
 {
 }
 
+UnaryOperator::UnaryOperator(Operand* dest,
+                             Operand* source)
+  : dest_(dest),
+    source_(source)
+{
+}
+
+UnaryOperator::~UnaryOperator()
+{
+}
 
 BinaryOperator::BinaryOperator(Operand* dest,
                                Operand* leftSource,
@@ -157,6 +200,69 @@ BinaryOperator::~BinaryOperator()
 
 
 
+# Write out the concrete unary operators
+
+parserFile.write("""
+  #define UNARY_OPERATOR(text, skip, klass)                             \
+  else if(ba::starts_with(line, #text))                                 \
+  {                                                                     \
+    std::string  rest     = line.substr(skip);                          \
+    StringVector operands;                                              \
+                                                                        \
+    ba::split(operands, rest, boost::is_any_of(","));                   \
+                                                                        \
+    if(operands.size()   != 2)                                          \
+    {                                                                   \
+      std::cerr << \"unary operators can contain only 2 operands.\" << std::endl; \
+      return NULL;                                                      \
+    }                                                                   \
+                                                                        \
+    ba::trim(operands[0]);                                              \
+    ba::trim(operands[1]);                                              \
+                                                                        \
+    Operand*     dest    = parseOperand(operands[0]);                   \
+    Operand*     source0 = parseOperand(operands[1]);                   \
+                                                                        \
+    Instruction* instr   = new klass(dest, source0);                    \
+                                                                        \
+    file->appendInstruction(instr);                                     \
+  }
+""")
+
+
+for unop in unary_operators:
+
+  headerFile.write('class %s : public UnaryOperator\n' % unop[1])
+  headerFile.write('{\n')
+  headerFile.write('public:\n')
+  headerFile.write('  /**\n')
+  headerFile.write('   * Constructor.\n')
+  headerFile.write('   *\n')
+  headerFile.write('   * @param[in] dest    The destination operand.\n')
+  headerFile.write('   * @param[in] source  The source operand.\n')
+  headerFile.write('   */\n')
+  headerFile.write('  %s(Operand* dest,\n' % unop[1])
+  headerFile.write('     Operand* source);\n')
+  headerFile.write('  /**\n')
+  headerFile.write('    * Destructor.\n')
+  headerFile.write('    */\n')
+  headerFile.write('  virtual ~%s();\n' % unop[1])
+  headerFile.write('};\n\n')
+  
+  sourceFile.write('%s::%s(Operand* dest,\n' % (unop[1], unop[1]))
+  sourceFile.write('       Operand* source)\n')
+  sourceFile.write('  : UnaryOperator(dest, source)\n')
+  sourceFile.write('{\n')
+  sourceFile.write('}\n\n')
+  sourceFile.write('%s::~%s()\n' % (unop[1], unop[1]))
+  sourceFile.write('{\n')
+  sourceFile.write('}\n\n')
+
+  parserFile.write('UNARY_OPERATOR(%s, %d, %s)\n' % (unop[0], len(unop[0]), unop[1]))
+
+
+
+
 # Write out the concrete binary operators
 
 parserFile.write("""
@@ -170,7 +276,7 @@ parserFile.write("""
                                                                         \
     if(operands.size()   != 3)                                          \
     {                                                                   \
-      std::cerr << \"binary operators can contain only 2 operands.\" << std::endl; \
+      std::cerr << \"binary operators can contain only 3 operands.\" << std::endl; \
       return NULL;                                                      \
     }                                                                   \
                                                                         \
@@ -204,6 +310,9 @@ for binop in binary_operators:
   headerFile.write('  %s(Operand* dest,\n' % binop[1])
   headerFile.write('     Operand* leftSource,\n')
   headerFile.write('     Operand* rightSource);\n')
+  headerFile.write('  /**\n')
+  headerFile.write('    * Destructor.\n')
+  headerFile.write('    */\n')
   headerFile.write('  virtual ~%s();\n' % binop[1])
   headerFile.write('};\n\n')
   

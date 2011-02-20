@@ -37,6 +37,8 @@ AmdIlFile* AmdIlParser::parseFile(const std::string& filename)
   }
 
   file = new AmdIlFile();
+
+  bool firstInstr = true;
   
   // AMDIL is a line-oriented language
   while(std::getline(stream, line).good())
@@ -68,7 +70,31 @@ AmdIlFile* AmdIlParser::parseFile(const std::string& filename)
       continue;
     }
 
-    std::cout << "****** " << line << std::endl;
+    if(firstInstr)
+    {
+      firstInstr = false;
+
+      boost::regex  versionRegex;
+      boost::smatch matches;
+      
+      versionRegex.assign("il_(cs|vs|ps)_([0-9]+)_([0-9]+)");
+
+      if(boost::regex_match(line, matches, versionRegex))
+      {
+        std::string shaderType(matches[1].first, matches[1].second);
+        std::string versionMajor(matches[2].first, matches[2].second);
+        std::string versionMinor(matches[3].first, matches[3].second);
+
+        std::cout << shaderType << " " << versionMajor << " " << versionMinor << std::endl;
+      }
+      else
+      {
+        std::cerr << "AMDIL source file must start with a shader version declaration." << std::endl;
+        return NULL;
+      }
+
+      continue;
+    }
     
     // Now we can finally parse the line.
     if(ba::starts_with(line, "dcl"))
