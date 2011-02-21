@@ -2,8 +2,9 @@
 #include "gpubintools/Common.hpp"
 #include "gpubintools/amdil/AmdIlParser.hpp"
 #include "gpubintools/amdil/AmdIlFile.hpp"
-#include "gpubintools/amdil/GeneratedInstructions.hpp"
+#include "gpubintools/amdil/Instructions.hpp"
 #include "gpubintools/amdil/Operand.hpp"
+#include "gpubintools/amdil/Function.hpp"
 
 
 namespace ba = boost::algorithm;
@@ -22,11 +23,114 @@ AmdIlParser::~AmdIlParser()
 }
 
 
+#define UNARY_OPERATOR(text, skip, klass)                               \
+  else if(ba::starts_with(line, #text))                                 \
+  {                                                                     \
+    std::string  rest     = line.substr(skip);                          \
+    StringVector operands;                                              \
+                                                                        \
+    ba::split(operands, rest, boost::is_any_of(","));                   \
+                                                                        \
+    if(operands.size()   != 2)                                          \
+    {                                                                   \
+      std::cerr << "unary operators can contain only 2 operands." << std::endl; \
+      return NULL;                                                      \
+    }                                                                   \
+                                                                        \
+    ba::trim(operands[0]);                                              \
+    ba::trim(operands[1]);                                              \
+                                                                        \
+    Operand*     dest     = parseOperand(operands[0]);                  \
+    Operand*     source0  = parseOperand(operands[1]);                  \
+                                                                        \
+    Instruction* instr    = new klass(dest, source0);                   \
+                                                                        \
+    if(function == NULL)                                                \
+    {                                                                   \
+      file->appendInstruction(instr);                                   \
+    }                                                                   \
+    else                                                                \
+    {                                                                   \
+      function->appendInstruction(instr);                               \
+    }                                                                   \
+  }                                                                     \
+
+#define BINARY_OPERATOR(text, skip, klass)                              \
+  else if(ba::starts_with(line, #text))                                 \
+  {                                                                     \
+    std::string  rest     = line.substr(skip);                          \
+    StringVector operands;                                              \
+                                                                        \
+    ba::split(operands, rest, boost::is_any_of(","));                   \
+                                                                        \
+    if(operands.size()   != 3)                                          \
+    {                                                                   \
+      std::cerr << "binary operators can contain only 3 operands." << std::endl; \
+      return NULL;                                                      \
+    }                                                                   \
+                                                                        \
+    ba::trim(operands[0]);                                              \
+    ba::trim(operands[1]);                                              \
+    ba::trim(operands[2]);                                              \
+                                                                        \
+    Operand*     dest    = parseOperand(operands[0]);                   \
+    Operand*     source0 = parseOperand(operands[1]);                   \
+    Operand*     source1 = parseOperand(operands[2]);                   \
+                                                                        \
+    Instruction* instr   = new klass(dest, source0, source1);           \
+                                                                        \
+    if(function == NULL)                                                \
+    {                                                                   \
+      file->appendInstruction(instr);                                   \
+    }                                                                   \
+    else                                                                \
+    {                                                                   \
+      function->appendInstruction(instr);                               \
+    }                                                                   \
+  }
+
+#define TERTIARY_OPERATOR(text, skip, klass)                            \
+  else if(ba::starts_with(line, #text))                                 \
+  {                                                                     \
+    std::string  rest     = line.substr(skip);                          \
+    StringVector operands;                                              \
+                                                                        \
+    ba::split(operands, rest, boost::is_any_of(","));                   \
+                                                                        \
+    if(operands.size()   != 4)                                          \
+    {                                                                   \
+      std::cerr << "tertiary operators can contain only 4 operands." << std::endl; \
+      return NULL;                                                      \
+    }                                                                   \
+                                                                        \
+    ba::trim(operands[0]);                                              \
+    ba::trim(operands[1]);                                              \
+    ba::trim(operands[2]);                                              \
+    ba::trim(operands[3]);                                              \
+                                                                        \
+    Operand*     dest    = parseOperand(operands[0]);                   \
+    Operand*     source0 = parseOperand(operands[1]);                   \
+    Operand*     source1 = parseOperand(operands[2]);                   \
+    Operand*     source2 = parseOperand(operands[3]);                   \
+                                                                        \
+    Instruction* instr   = new klass(dest, source0, source1, source2);  \
+                                                                        \
+    if(function == NULL)                                                \
+    {                                                                   \
+      file->appendInstruction(instr);                                   \
+    }                                                                   \
+    else                                                                \
+    {                                                                   \
+      function->appendInstruction(instr);                               \
+    }                                                                   \
+  }
+
 AmdIlFile* AmdIlParser::parseFile(const std::string& filename)
 {
   typedef std::vector<std::string> StringVector;
 
   AmdIlFile*  file;
+  Function*   function;
   std::string line;
   
   std::ifstream stream(filename.c_str(), std::ios::in | std::ios::binary);
@@ -36,9 +140,11 @@ AmdIlFile* AmdIlParser::parseFile(const std::string& filename)
     return NULL;
   }
 
-  file = new AmdIlFile();
+  function = NULL;
+  file     = new AmdIlFile();
 
   bool firstInstr = true;
+
   
   // AMDIL is a line-oriented language
   while(std::getline(stream, line).good())
@@ -106,7 +212,96 @@ AmdIlFile* AmdIlParser::parseFile(const std::string& filename)
     {
       // We have some sort of uav access instruction.
     }
-#include "gpubintools/amdil/ParserSupport.inl"
+    else if(ba::starts_with(line, "endmain"))
+    {
+      // We are at the end of the main function.
+    }
+    else if(ba::starts_with(line, "endfunc"))
+    {
+      function = NULL;
+    }
+    else if(ba::starts_with(line, "if_"))
+    {
+      // @TODO
+    }
+    else if(ba::starts_with(line, "else"))
+    {
+      // @TODO
+    }
+    else if(ba::starts_with(line, "endif"))
+    {
+      // @TODO
+    }
+    else if(ba::starts_with(line, "end"))
+    {
+      // @TODO
+    }
+    else if(ba::starts_with(line, "ret"))
+    {
+      Instruction* instr = new RetInstruction();
+
+      if(function == NULL)
+      {
+        file->appendInstruction(instr);
+      }
+      else
+      {
+        function->appendInstruction(instr);
+      }
+    }
+    else if(ba::starts_with(line, "func"))
+    {
+      std::string  rest = line.substr(4);
+      StringVector operands;
+
+      if(function != NULL)
+      {
+        std::cerr << "Cannot start a function within another function." << std::endl;
+        return NULL;
+      }
+      
+      ba::split(operands, rest, boost::is_any_of(","));
+
+      if(operands.size() != 1)
+      {
+        std::cerr << "function definitions can contain only 1 operand." << std::endl;
+        return NULL;
+      }
+
+      ba::trim(operands[0]);
+
+      function = file->defineFunction(operands[0]);
+    }
+    else if(ba::starts_with(line, "call"))
+    {
+      std::string  rest = line.substr(4);
+      StringVector operands;
+      
+      ba::split(operands, rest, boost::is_any_of(","));
+
+      if(operands.size() != 1)
+      {
+        std::cerr << "call instructions can contain only 1 operand." << std::endl;
+        return NULL;
+      }
+
+      ba::trim(operands[0]);
+
+      Instruction* instr = new CallInstruction(operands[0]);
+
+      if(function == NULL)
+      {
+        file->appendInstruction(instr);
+      }
+      else
+      {
+        function->appendInstruction(instr);
+      }
+    }
+    UNARY_OPERATOR(mov, 3, MovInstruction)
+      BINARY_OPERATOR(iadd, 4, IAddInstruction)
+      BINARY_OPERATOR(ishl, 4, IShlInstruction)
+      TERTIARY_OPERATOR(imad, 4, IMadInstruction)
     else
     {
       std::cerr << "FATAL:  Unknown instruction:  " << line << std::endl;

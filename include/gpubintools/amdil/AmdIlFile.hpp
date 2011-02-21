@@ -7,6 +7,7 @@ namespace gpubintools
 namespace amdil
 {
 
+class Function;
 class Instruction;
 
 /**
@@ -34,12 +35,22 @@ public:
    */
   void appendInstruction(Instruction* instr);
 
+  /**
+   * Defines a new AMDIL function.
+   *
+   * @param[in] name  The function name.
+   *
+   * @return The Function instance.
+   */
+  Function* defineFunction(const std::string& name);
   
 private:
 
-  typedef std::list<Instruction*> InstructionList;
-
+  typedef std::list<Instruction*>          InstructionList;
+  typedef std::map<std::string, Function*> FunctionMap;
+  
   InstructionList instructions_;
+  FunctionMap     functions_;
   
 };
 

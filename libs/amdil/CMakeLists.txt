@@ -24,22 +24,16 @@
 # Define sources
 set(_sources  "AmdIlFile.cpp"
               "AmdIlParser.cpp"
-              "Operand.cpp"
-              "${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil/GeneratedInstructions.cpp")
+              "Function.cpp"
+              "Instructions.cpp"
+              "Operand.cpp")
 
 set(_headers  "${_header_root}/amdil/AmdIlFile.hpp"
               "${_header_root}/amdil/AmdIlParser.hpp"
-              "${_header_root}/amdil/Operand.hpp"
-              "${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil/GeneratedInstructions.hpp")
+              "${_header_root}/amdil/Function.hpp"
+              "${_header_root}/amdil/Instructions.hpp"
+              "${_header_root}/amdil/Operand.hpp")
 
-
-# Create target to generate AST nodes
-file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil")
-add_custom_command(OUTPUT   "${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil/GeneratedInstructions.cpp" "${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil/GeneratedInstructions.hpp"
-                   COMMAND  python ${CMAKE_CURRENT_SOURCE_DIR}/../../tools/generate-ast/generate-amdil-ast.py ${CMAKE_CURRENT_BINARY_DIR}/gpubintools/amdil
-                   MAIN_DEPENDENCY  ${CMAKE_CURRENT_SOURCE_DIR}/../../tools/generate-ast/generate-amdil-ast.py
-                   COMMENT  "Generating AMDIL AST C++ nodes")
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 
 # Include local headers
