@@ -10,6 +10,13 @@ namespace amdil
 class Function;
 class Instruction;
 
+enum ShaderType
+{
+  kShaderTypeCompute,
+  kShaderTypePixel,
+  kShaderTypeVertex,
+};
+
 /**
  * An AMDIL source file.
  */
@@ -43,6 +50,24 @@ public:
    * @return The Function instance.
    */
   Function* defineFunction(const std::string& name);
+
+  /**
+   * Prints a text representation of the AST to a stream.
+   *
+   * @param[in] stream  The text stream.
+   */
+  void prettyPrint(std::ostream& stream);
+
+  /**
+   * Sets the version number of the AMDIL program.
+   *
+   * @param[in] type          The shader type.
+   * @param[in] versionMajor  The major version number.
+   * @param[in] versionMinor  The minor version number.
+   */
+  void setVersion(ShaderType type,
+                  size_t     versionMajor,
+                  size_t     versionMinor);
   
 private:
 
@@ -51,6 +76,9 @@ private:
   
   InstructionList instructions_;
   FunctionMap     functions_;
+  ShaderType      type_;
+  size_t          versionMajor_;
+  size_t          versionMinor_;
   
 };
 

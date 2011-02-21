@@ -191,7 +191,27 @@ AmdIlFile* AmdIlParser::parseFile(const std::string& filename)
         std::string versionMajor(matches[2].first, matches[2].second);
         std::string versionMinor(matches[3].first, matches[3].second);
 
-        std::cout << shaderType << " " << versionMajor << " " << versionMinor << std::endl;
+        ShaderType type;
+
+        if(shaderType == "cs")
+        {
+          type = kShaderTypeCompute;
+        }
+        else if(shaderType == "ps")
+        {
+          type = kShaderTypePixel;
+        }
+        else if(shaderType == "vs")
+        {
+          type = kShaderTypeVertex;
+        }
+        else
+        {
+          std::cerr << "Unknown shader type:  " << shaderType << std::endl;
+          return NULL;
+        }
+
+        file->setVersion(type, boost::lexical_cast<size_t>(versionMajor), boost::lexical_cast<size_t>(versionMinor));
       }
       else
       {

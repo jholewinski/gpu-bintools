@@ -14,5 +14,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/regex.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
 
 #endif
